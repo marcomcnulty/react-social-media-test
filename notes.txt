@@ -1,0 +1,133 @@
+// import React from "react";
+// import ReactDOM from "react-dom";
+
+// const baseUrl = "https://api.github.com/users/";
+
+// function App() {
+
+// const [language, setLanguage] = React.useState("python");
+// const [yearsExperience, setYearsExperience] = React.useState(0);
+
+// const [developerInfo, setDeveloperInfo] = React.useState({
+//   name: "John",
+//   language: "Python",
+//   yearsExperience: 0,
+//   isEmployed: false
+// });
+
+// changing dom is called sideEffect, you can pass "dependencies" in array to avoid it firing unneccessarily
+// React.useEffect(() => {
+//   document.title = developerInfo.name;
+//   console.log("runs");
+// }, [developerInfo.name]);
+
+// function handleChangeName(event) {
+//   setDeveloperInfo({
+//     ...developerInfo,
+//     name: event.target.value
+//   });
+// }
+
+// function handleChangeLanguage() {
+//   setDeveloperInfo({
+//       language: "JavaScript",
+//       yearsExperience: 0
+//     });
+// }
+
+// function handleChangeYearsExperience(event) {
+//   setDeveloperInfo({
+//     ...developerInfo,
+//     yearsExperience: event.target.value
+//   });
+// }
+
+// function handleEmploymentToggle() {
+//   setDeveloperInfo(prevState => ({
+//     ...prevState,
+//     isEmployed: !developerInfo.isEmployed
+//   }));
+// }
+
+// return (
+//   <div>
+//     <button onClick={handleEmploymentToggle}>Toggle Employment Status</button>
+//     <button onClick={handleChangeLanguage}>Change Language</button>
+//     <div>
+//       <input type="number" onChange={handleChangeYearsExperience} />
+//       <input type="text" onChange={handleChangeName} placeholder="Change name" />
+//     </div>
+
+//     <p>I am learning {developerInfo.language}</p>
+//     <p>I have {developerInfo.yearsExperience} years of experience</p>
+//     <p>Employment Status: {developerInfo.isEmployed ? "Employed" : "Unemployed" }</p>
+//   </div>
+// );
+
+// const [mousePosition, setMousePosition] = React.useState({ x: 0, y: 0 });
+
+// React.useEffect(() => {
+//   document.addEventListener('mousemove', handleMouseMove);
+
+//   // avoids memory leak by removing listener once component is unmounted
+//   return () => {
+//     document.removeEventListener('mousemove', handleMouseMove);
+//   }
+// }, []);
+
+// function handleMouseMove(event) {
+//   setMousePosition({ x: event.pageX, y: event.pageY });
+// }
+
+// return (
+//   <div>
+//     <p>X: {mousePosition.x}, Y: {mousePosition.y}</p>
+//   </div>
+// )
+// }
+
+function App() {
+  const [username, setUsername] = React.useState("Marco-FI-SEI");
+  const [user, setUser] = React.useState(null);
+  const searchInput = React.useRef();
+
+  React.useEffect(() => {
+    getUser();
+  }, []);
+
+  async function getUser() {
+    const response = await fetch(`${baseUrl}${username}`);
+    const data = await response.json();
+    setUser(data);
+  }
+
+  function handleClearInput() {
+    searchInput.current.value = "";
+    searchInput.current.focus();
+  }
+
+  return (
+    <div>
+      <input
+        onChange={e => setUsername(e.target.value)}
+        type="text"
+        placeholder="Input username"
+        ref={searchInput}
+      />
+      <button onClick={getUser}>Search</button>
+      <button onClick={handleClearInput}>Clear</button>
+      {user ? (
+        <div>
+          <h2>{user.name}</h2>
+          <p>{user.bio}</p>
+          <img alt="avatar" src={user.avatar_url} style={{ height: 50 }} />
+        </div>
+      ) : (
+        <p>Loading...</p>
+      )}
+    </div>
+  );
+}
+
+const rootNode = document.getElementById("root");
+ReactDOM.render(<App />, rootNode);
